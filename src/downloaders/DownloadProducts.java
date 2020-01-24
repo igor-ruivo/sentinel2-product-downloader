@@ -20,7 +20,6 @@ public class DownloadProducts {
 			configPath = args[0];
 		else
 			configPath = CONFIG_PATH;
-
 		File file = new File(configPath);
 		InputStream is = null;
 		try {
