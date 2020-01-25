@@ -10,5 +10,5 @@ package downloaders;
  *
  */
 public interface Downloader {
-	public void downloadSentinel2Product();
+	public void downloadSentinel2Products();
 }

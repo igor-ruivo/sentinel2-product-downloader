@@ -25,14 +25,15 @@ public class DownloadProducts {
 		try {
 			is = new FileInputStream(file);
 			Downloader dl = new DownloadManager(is);
-			dl.downloadSentinel2Product();
+			dl.downloadSentinel2Products();
 		}
 		catch(Exception e) {
 			e.printStackTrace();
 		}
 		finally {
 			try {
-				is.close();
+				if(is != null)
+					is.close();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
