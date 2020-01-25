@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Properties;
 
 public class DownloadProducts {
 
@@ -24,7 +25,9 @@ public class DownloadProducts {
 		InputStream is = null;
 		try {
 			is = new FileInputStream(file);
-			Downloader dl = new DownloadManager(is);
+			Properties prop = new Properties();
+			prop.load(is);
+			Downloader dl = new DownloadManager(prop);
 			dl.downloadSentinel2Products();
 		}
 		catch(Exception e) {

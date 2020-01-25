@@ -25,16 +25,16 @@ import org.w3c.dom.Element;
 
 public class DownloadManager implements Downloader {
 
-	InputStream configFile;
+	Properties prop;
 	Queue<Product> buffer;
 
 	public DownloadManager() {
-		configFile = null;
+		prop = null;
 		buffer = new ConcurrentLinkedQueue<Product>();
 	}
 
-	public DownloadManager(InputStream configFile) {
-		this.configFile = configFile;
+	public DownloadManager(Properties prop) {
+		this.prop = prop;
 		buffer = new ConcurrentLinkedQueue<Product>();
 	}
 
@@ -60,8 +60,6 @@ public class DownloadManager implements Downloader {
 	}
 
 	private InputStream httpConnection(URL url, HttpMethod method) throws IOException {
-		Properties prop = new Properties();
-		prop.load(configFile);
 		String usr = prop.getProperty("username");
 		String pwd = prop.getProperty("password");
 		String encoding = Base64.getEncoder().encodeToString((usr + ":" + pwd).getBytes("UTF-8"));
@@ -95,15 +93,13 @@ public class DownloadManager implements Downloader {
 	}
 
 	private void download(Product product, String dstFolderPath) {
-		System.out.println("downloading " + product.getFileName());
+		System.out.println("Downloading " + product.getFileName() + ".");
 		FileOutputStream fos = null;
 		try {
-			System.out.println("entra");
 			ReadableByteChannel rbc = Channels.newChannel(httpConnection(product.getLink(), HttpMethod.GET));
-			System.out.println("sai");
 			fos = new FileOutputStream(dstFolderPath + "\\" +  product.getFileName());
 			fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
-			System.out.println("done.");
+			System.out.println("Finished downloading " + product.getFileName() + ".");
 		}
 		catch(IOException e) {
 			e.printStackTrace();
