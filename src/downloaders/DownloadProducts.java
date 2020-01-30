@@ -9,7 +9,7 @@ import java.util.Properties;
 public class DownloadProducts {
 
 	private static final String BAD_ARGS = "Invalid arguments. Usage: DownloadProducts.java [/../config.properties]";
-	private static final String CONFIG_PATH = "./config/config.properties";
+	private static final String CONFIG_PATH = "./configs/downloader_config.properties";
 
 	public static void main(String[] args) {
 		if(args.length > 1) {

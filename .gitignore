@@ -1,4 +1,4 @@
-config/*
-!config/.gitkeep
+configs/*
+!configs/.gitkeep
 src/utils/*
 !src/utils/.gitkeep
