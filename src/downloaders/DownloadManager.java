@@ -29,14 +29,20 @@ public class DownloadManager implements Downloader {
 
 	Properties prop;
 	Queue<Product> buffer;
+	long[] timer;
+	int counter;
 
 	public DownloadManager() {
 		prop = null;
+		timer = new long[Integer.parseInt(prop.getProperty(DownloaderConfigurations.max_connections_per_time_window.name()))];
+		counter = 0;
 		buffer = new ConcurrentLinkedQueue<Product>();
 	}
 
 	public DownloadManager(Properties prop) {
 		this.prop = prop;
+		timer = new long[Integer.parseInt(prop.getProperty(DownloaderConfigurations.max_connections_per_time_window.name()))];
+		counter = 0;
 		buffer = new ConcurrentLinkedQueue<Product>();
 	}
 
@@ -62,7 +68,19 @@ public class DownloadManager implements Downloader {
 		}
 	}
 
-	private InputStream httpConnection(URL url, HttpMethod method) throws IOException {
+	private boolean canMakeNewRequest() {
+		return timer[counter] == 0 || System.currentTimeMillis() - timer[counter] >= Float.parseFloat(prop.getProperty(DownloaderConfigurations.time_window.name()));
+	}
+
+	private void setRequestTimer() {
+		timer[counter] = System.currentTimeMillis();
+		counter = (counter + 1) % timer.length;
+	}
+
+	private synchronized InputStream httpConnection(URL url, HttpMethod method) throws IOException, InterruptedException {
+		while(!canMakeNewRequest())
+			Thread.sleep(3000);
+		setRequestTimer();
 		String usr = prop.getProperty(DownloaderConfigurations.username.name());
 		String pwd = prop.getProperty(DownloaderConfigurations.password.name());
 		String encoding = Base64.getEncoder().encodeToString((usr + ":" + pwd).getBytes("UTF-8"));
@@ -113,8 +131,8 @@ public class DownloadManager implements Downloader {
 	}
 
 	private void download(Product product, String dstFolderPath) {
-		System.out.println("Downloading " + product.getFileName() + ".");
 		FileOutputStream fos = null;
+		System.out.println("Downloading " + product.getFileName() + ".");
 		try {
 			ReadableByteChannel rbc = Channels.newChannel(httpConnection(product.getLink(), HttpMethod.GET));
 			fos = new FileOutputStream(dstFolderPath + (dstFolderPath.endsWith("\\") ? "" : "\\") +  product.getFileName());
@@ -122,6 +140,9 @@ public class DownloadManager implements Downloader {
 			System.out.println("Finished downloading " + product.getFileName() + ".");
 		}
 		catch(IOException e) {
+			e.printStackTrace();
+		}
+		catch (InterruptedException e) {
 			e.printStackTrace();
 		}
 		finally {
