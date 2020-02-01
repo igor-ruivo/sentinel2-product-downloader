@@ -19,7 +19,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import enums.DownloaderConfigurations;
-import enums.HttpMethod;
+import enums.HttpMethods;
 import utils.XMLParser;
 
 import org.w3c.dom.Node;
@@ -77,7 +77,7 @@ public class DownloadManager implements Downloader {
 		counter = (counter + 1) % timer.length;
 	}
 
-	private synchronized InputStream httpConnection(URL url, HttpMethod method) throws IOException, InterruptedException {
+	private synchronized InputStream httpConnection(URL url, HttpMethods method) throws IOException, InterruptedException {
 		while(!canMakeNewRequest())
 			Thread.sleep(3000);
 		setRequestTimer();
@@ -112,7 +112,7 @@ public class DownloadManager implements Downloader {
 				uri.addParameter("rows", Integer.toString(COPERNICUS_MAX_ROWS_PER_REQUEST));
 				uri.addParameter("q", footprint);
 				URL url = uri.build().toURL();
-				content = httpConnection(url, HttpMethod.POST);
+				content = httpConnection(url, HttpMethods.POST);
 				requests++;
 			}
 			while(digestCopernicusXMLResponse(content) == COPERNICUS_MAX_ROWS_PER_REQUEST);
@@ -134,7 +134,7 @@ public class DownloadManager implements Downloader {
 		FileOutputStream fos = null;
 		System.out.println("Downloading " + product.getFileName() + ".");
 		try {
-			ReadableByteChannel rbc = Channels.newChannel(httpConnection(product.getLink(), HttpMethod.GET));
+			ReadableByteChannel rbc = Channels.newChannel(httpConnection(product.getLink(), HttpMethods.GET));
 			fos = new FileOutputStream(dstFolderPath + (dstFolderPath.endsWith("\\") ? "" : "\\") +  product.getFileName());
 			fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
 			System.out.println("Finished downloading " + product.getFileName() + ".");

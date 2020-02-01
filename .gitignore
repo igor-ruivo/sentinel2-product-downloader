@@ -1,5 +1,2 @@
-configs/*
 target/*
 bin/*
-!configs/.gitkeep
-src/utils/AddConfigProperties.java

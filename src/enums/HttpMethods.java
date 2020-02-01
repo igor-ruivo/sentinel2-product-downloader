@@ -1,5 +1,5 @@
 package enums;
 
-public enum HttpMethod {
+public enum HttpMethods {
 	GET, POST, HEAD, OPTIONS, PUT, DELETE, TRACE
 }
