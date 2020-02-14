@@ -1,4 +1,4 @@
-package downloaders;
+package productTreatment;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -6,10 +6,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
-public class DownloadProducts {
+import productTreatment.Sentinel2.Sentinel2PreProductProcessing;
 
-	private static final String BAD_ARGS = "Invalid arguments. Usage: DownloadProducts.java [/../downloader_config.properties]";
-	private static final String CONFIG_PATH = "./configs/downloader_config.properties";
+public class PreProcessProducts {
+
+	private static final String BAD_ARGS = "Invalid arguments. Usage: PreProcessProducts.java [/../product-treatment_config.properties]";
+	private static final String CONFIG_PATH = "./configs/product-treatment_config.properties";
 
 	public static void main(String[] args) {
 		if(args.length > 1) {
@@ -27,8 +29,8 @@ public class DownloadProducts {
 			is = new FileInputStream(file);
 			Properties prop = new Properties();
 			prop.load(is);
-			Downloader dl = new DownloadManager(prop);
-			dl.downloadSentinel2Products();
+			ProductPreProcessment ppp = new Sentinel2PreProductProcessing();
+			ppp.decompressJP2Files();
 		}
 		catch(Exception e) {
 			e.printStackTrace();

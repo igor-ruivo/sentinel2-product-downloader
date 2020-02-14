@@ -31,19 +31,15 @@ public class DownloadManager implements Downloader {
 	Queue<Product> buffer;
 	long[] timer;
 	int counter;
-
+	
 	public DownloadManager() {
 		prop = null;
-		timer = new long[Integer.parseInt(prop.getProperty(DownloaderConfigurations.max_connections_per_time_window.name()))];
-		counter = 0;
-		buffer = new ConcurrentLinkedQueue<Product>();
+		initializeVariables();
 	}
 
 	public DownloadManager(Properties prop) {
 		this.prop = prop;
-		timer = new long[Integer.parseInt(prop.getProperty(DownloaderConfigurations.max_connections_per_time_window.name()))];
-		counter = 0;
-		buffer = new ConcurrentLinkedQueue<Product>();
+		initializeVariables();
 	}
 
 	public class DownloaderThread extends Thread {
@@ -58,6 +54,12 @@ public class DownloadManager implements Downloader {
 			while((product = buffer.poll()) != null)
 				download(product, prop.getProperty(DownloaderConfigurations.products_folder.name()));
 		}
+	}
+
+	private void initializeVariables() {
+		timer = new long[Integer.parseInt(prop.getProperty(DownloaderConfigurations.max_connections_per_time_window.name()))];
+		counter = 0;
+		buffer = new ConcurrentLinkedQueue<Product>();
 	}
 
 	private void setupThreads() {
@@ -132,10 +134,10 @@ public class DownloadManager implements Downloader {
 
 	private void download(Product product, String dstFolderPath) {
 		FileOutputStream fos = null;
-		System.out.println("Downloading " + product.getFileName() + ".");
 		try {
 			ReadableByteChannel rbc = Channels.newChannel(httpConnection(product.getLink(), HttpMethods.GET));
 			fos = new FileOutputStream(dstFolderPath + (dstFolderPath.endsWith("\\") ? "" : "\\") +  product.getFileName());
+			System.out.println("Downloading " + product.getFileName() + ".");
 			fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
 			System.out.println("Finished downloading " + product.getFileName() + ".");
 		}

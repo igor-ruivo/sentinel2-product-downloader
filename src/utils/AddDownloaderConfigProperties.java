@@ -9,7 +9,7 @@ import java.util.Properties;
 
 import enums.DownloaderConfigurations;
 
-public class AddConfigProperties {
+public class AddDownloaderConfigProperties {
 
 	public static void main(String[] args) {
 		InputStream is = null;
