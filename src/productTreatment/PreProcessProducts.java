@@ -29,7 +29,7 @@ public class PreProcessProducts {
 			is = new FileInputStream(file);
 			Properties prop = new Properties();
 			prop.load(is);
-			ProductPreProcessment ppp = new Sentinel2PreProductProcessing();
+			ProductPreProcessment ppp = new Sentinel2PreProductProcessing(prop);
 			ppp.decompressJP2Files();
 		}
 		catch(Exception e) {

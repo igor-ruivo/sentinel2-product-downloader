@@ -20,6 +20,11 @@ import org.xml.sax.SAXException;
 
 import enums.DownloaderConfigurations;
 import enums.HttpMethods;
+import exceptions.InvalidProductNameException;
+import products.L1CProduct;
+import products.L2AProduct;
+import products.SatelliteProduct;
+import utils.Sentinel2ProductUtils;
 import utils.XMLParser;
 
 import org.w3c.dom.Node;
@@ -28,7 +33,7 @@ import org.w3c.dom.Element;
 public class DownloadManager implements Downloader {
 
 	Properties prop;
-	Queue<Product> buffer;
+	Queue<SatelliteProduct> buffer;
 	long[] timer;
 	int counter;
 	
@@ -50,7 +55,7 @@ public class DownloadManager implements Downloader {
 
 		@Override
 		public void run() {
-			Product product;
+			SatelliteProduct product;
 			while((product = buffer.poll()) != null)
 				download(product, prop.getProperty(DownloaderConfigurations.products_folder.name()));
 		}
@@ -59,7 +64,7 @@ public class DownloadManager implements Downloader {
 	private void initializeVariables() {
 		timer = new long[Integer.parseInt(prop.getProperty(DownloaderConfigurations.max_connections_per_time_window.name()))];
 		counter = 0;
-		buffer = new ConcurrentLinkedQueue<Product>();
+		buffer = new ConcurrentLinkedQueue<SatelliteProduct>();
 	}
 
 	private void setupThreads() {
@@ -132,14 +137,14 @@ public class DownloadManager implements Downloader {
 		}
 	}
 
-	private void download(Product product, String dstFolderPath) {
+	private void download(SatelliteProduct product, String dstFolderPath) {
 		FileOutputStream fos = null;
 		try {
-			ReadableByteChannel rbc = Channels.newChannel(httpConnection(product.getLink(), HttpMethods.GET));
-			fos = new FileOutputStream(dstFolderPath + (dstFolderPath.endsWith("\\") ? "" : "\\") +  product.getFileName());
-			System.out.println("Downloading " + product.getFileName() + ".");
+			ReadableByteChannel rbc = Channels.newChannel(httpConnection(product.getProductDownloadLink(), HttpMethods.GET));
+			fos = new FileOutputStream(dstFolderPath + (dstFolderPath.endsWith("\\") ? "" : "\\") +  product.getProductFileName());
+			System.out.println("Downloading " + product.getProductFileName() + ".");
 			fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
-			System.out.println("Finished downloading " + product.getFileName() + ".");
+			System.out.println("Finished downloading " + product.getProductFileName() + ".");
 		}
 		catch(IOException e) {
 			e.printStackTrace();
@@ -166,7 +171,7 @@ public class DownloadManager implements Downloader {
 		return null;
 	}
 
-	private int digestCopernicusXMLResponse(InputStream xml) throws SAXException, IOException, ParserConfigurationException {
+	private int digestCopernicusXMLResponse(InputStream xml) throws SAXException, IOException, ParserConfigurationException, InvalidProductNameException {
 		XMLParser responseParser = new XMLParser(xml);
 		NodeList nList = responseParser.getNodeListByTagName("entry");
 		for (int temp = 0; temp < nList.getLength(); temp++) {
@@ -177,7 +182,12 @@ public class DownloadManager implements Downloader {
 				String id = eElement.getElementsByTagName("id").item(0).getTextContent();
 				URL link = new URL(String.format(COPERNICUS_PRODUCT_URL, id));
 				String size = getNodeContext(eElement.getElementsByTagName("str"), "size");
-				Product product = new Product(title, size, link);
+				SatelliteProduct product = null;
+				if(Sentinel2ProductUtils.isProductL1C(title))
+					product = new L1CProduct(title, size, link);
+				if(Sentinel2ProductUtils.isProductL2A(title))
+					product = new L2AProduct(title, size, link);
+				assert(product != null);
 				buffer.add(product);
 			}
 		}

@@ -20,7 +20,7 @@ public class AddProductTreatmentConfigProperties {
 			is = new FileInputStream(path);
 			os = new FileOutputStream(path);
 			prop.load(is);
-			prop.setProperty(ProductTreatmentConfigurations.products_folder.name(), "D:/Sentinel-2");
+			prop.setProperty(ProductTreatmentConfigurations.products_folder.name(), "C:/Users/Igor/Desktop");
 			prop.store(os, null);
 		} catch(Exception e) {
 			e.printStackTrace();

@@ -1,32 +1,39 @@
-package downloaders;
+package products;
 
 import java.net.URL;
 
-public class Product {
+public abstract class Product implements SatelliteProduct {
 	
 	private String name;
 	private float size;
 	private URL link;
 	
 	protected Product(String name, String size, URL link) {
+		assert(isValidProductName(name));
 		this.name = name;
 		this.size = parseSize(size);
 		this.link = link;
 	}
 	
-	protected String getName() {
+	protected Product(String name) {
+		this.name = name;
+		size = -1;
+		link = null;
+	}
+	
+	public String getProductName() {
 		return name;
 	}
 	
-	protected String getFileName() {
+	public String getProductFileName() {
 		return name + ".zip";
 	}
 	
-	protected float getSize() {
+	public float getProductSize() {
 		return size;
 	}
 	
-	protected URL getLink() {
+	public URL getProductDownloadLink() {
 		return link;
 	}
 	
@@ -35,6 +42,6 @@ public class Product {
 	}
 	
 	public String toString() {
-		return getName();
+		return getProductName();
 	}
 }

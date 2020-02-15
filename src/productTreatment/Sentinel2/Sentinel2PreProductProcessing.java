@@ -1,11 +1,11 @@
 package productTreatment.Sentinel2;
 
 import java.io.File;
-import java.nio.file.Paths;
 import java.util.Properties;
 
 import enums.ProductTreatmentConfigurations;
 import productTreatment.PreProductProcessing;
+import utils.Sentinel2ProductUtils;
 
 public class Sentinel2PreProductProcessing extends PreProductProcessing {
 
@@ -32,19 +32,15 @@ public class Sentinel2PreProductProcessing extends PreProductProcessing {
 	//TODO:
 	@Override
 	public void decompressJP2Files(String productDir) {
-	}
-
-	//TODO:
-	private boolean isL1C(String productName) {
-		return false;
+		System.out.println(productDir);
 	}
 
 	@Override
 	public void decompressJP2Files() {
 		String productsPath = prop.getProperty(ProductTreatmentConfigurations.products_folder.name());
 		File[] dir = new File(productsPath).listFiles();
-		for (File file : dir)
-			if(file.isDirectory())
+		for(File file : dir)
+			if(file.isDirectory() && Sentinel2ProductUtils.checkProductName(file.getName(), null))
 				decompressJP2Files(file.getAbsolutePath());
 	}
 }
