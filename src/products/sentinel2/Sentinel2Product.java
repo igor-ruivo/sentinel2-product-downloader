@@ -1,7 +1,8 @@
-package products;
+package products.sentinel2;
 
 import java.net.URL;
 
+import products.Product;
 import utils.Sentinel2ProductUtils;
 
 public abstract class Sentinel2Product extends Product {

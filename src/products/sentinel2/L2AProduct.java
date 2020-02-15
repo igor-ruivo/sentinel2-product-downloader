@@ -1,4 +1,4 @@
-package products;
+package products.sentinel2;
 
 import java.net.URL;
 

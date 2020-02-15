@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
-import productTreatment.Sentinel2.Sentinel2PreProductProcessing;
+import productTreatment.sentinel2.Sentinel2PreProductProcessing;
 
 public class PreProcessProducts {
 

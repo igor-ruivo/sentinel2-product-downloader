@@ -1,4 +1,4 @@
-package productTreatment.Sentinel2;
+package productTreatment.sentinel2;
 
 import java.io.File;
 import java.util.Properties;

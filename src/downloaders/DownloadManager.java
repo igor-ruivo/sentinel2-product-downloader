@@ -21,9 +21,9 @@ import org.xml.sax.SAXException;
 import enums.DownloaderConfigurations;
 import enums.HttpMethods;
 import exceptions.InvalidProductNameException;
-import products.L1CProduct;
-import products.L2AProduct;
 import products.SatelliteProduct;
+import products.sentinel2.L1CProduct;
+import products.sentinel2.L2AProduct;
 import utils.Sentinel2ProductUtils;
 import utils.XMLParser;
 
